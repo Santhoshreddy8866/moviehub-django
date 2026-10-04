@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Booking Summary | MovieHub</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+
+            min-height: 100vh;
+            margin: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 30px 15px;
+
+            color: white;
+
+            background:
+                radial-gradient(
+                    circle at top left,
+                    rgba(126, 34, 206, 0.45),
+                    transparent 35%
+                ),
+                radial-gradient(
+                    circle at bottom right,
+                    rgba(190, 18, 60, 0.38),
+                    transparent 35%
+                ),
+                linear-gradient(
+                    135deg,
+                    #030712,
+                    #111827
+                );
+        }
+
+
+        .glass-card {
+
+            width: 100%;
+            max-width: 620px;
+
+            padding: 35px;
+
+            border-radius: 28px;
+
+            background:
+                rgba(255,255,255,0.07);
+
+            border:
+                1px solid rgba(255,255,255,0.12);
+
+            backdrop-filter: blur(22px);
+
+            box-shadow:
+                0 30px 80px rgba(0,0,0,0.45);
+        }
+
+
+        .title {
+
+            font-size: 32px;
+            font-weight: 800;
+
+            margin-bottom: 5px;
+        }
+
+
+        .subtitle {
+
+            color: #94a3b8;
+
+            margin-bottom: 25px;
+        }
+
+
+        .info-box {
+
+            padding: 18px;
+
+            margin-bottom: 15px;
+
+            border-radius: 17px;
+
+            background:
+                rgba(255,255,255,0.055);
+
+            border:
+                1px solid rgba(255,255,255,0.08);
+        }
+
+
+        .label {
+
+            color: #94a3b8;
+
+            font-size: 13px;
+
+            margin-bottom: 6px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+        }
+
+
+        .movie-title {
+
+            font-size: 23px;
+
+            font-weight: 700;
+
+            margin-bottom: 8px;
+        }
+
+
+        .show-details {
+
+            color: #cbd5e1;
+
+            line-height: 1.8;
+        }
+
+
+        .seat {
+
+            display: inline-block;
+
+            padding: 7px 12px;
+
+            margin: 4px 4px 4px 0;
+
+            border-radius: 9px;
+
+            background: #22c55e;
+
+            color: #052e16;
+
+            font-weight: bold;
+        }
+
+
+        .amount {
+
+            font-size: 34px;
+
+            font-weight: 800;
+
+            color: #4ade80;
+
+            margin-top: 3px;
+        }
+
+
+        .email {
+
+            color: #fda4af;
+
+            word-break: break-all;
+        }
+
+
+        .otp-button {
+
+            width: 100%;
+
+            padding: 14px;
+
+            margin-top: 10px;
+
+            border: none;
+
+            border-radius: 13px;
+
+            color: white;
+
+            font-weight: 700;
+
+            font-size: 16px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #ff1744,
+                    #ff416c
+                );
+
+            transition: 0.3s;
+        }
+
+
+        .otp-button:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 12px 30px
+                rgba(255,23,68,0.28);
+        }
+
+
+        .back-link {
+
+            display: inline-block;
+
+            margin-bottom: 22px;
+
+            color: #cbd5e1;
+
+            text-decoration: none;
+        }
+
+
+        .back-link:hover {
+            color: white;
+        }
+
+
+        .custom-alert {
+
+            padding: 14px 16px;
+
+            margin-bottom: 20px;
+
+            border-radius: 13px;
+
+            font-size: 14px;
+        }
+
+
+        .alert-success-custom {
+
+            color: #bbf7d0;
+
+            background:
+                rgba(34,197,94,0.15);
+
+            border:
+                1px solid
+                rgba(34,197,94,0.30);
+        }
+
+
+        .alert-error-custom {
+
+            color: #fecaca;
+
+            background:
+                rgba(239,68,68,0.15);
+
+            border:
+                1px solid
+                rgba(239,68,68,0.30);
+        }
+
+
+        .alert-info-custom {
+
+            color: #bfdbfe;
+
+            background:
+                rgba(59,130,246,0.15);
+
+            border:
+                1px solid
+                rgba(59,130,246,0.30);
+        }
+
+
+        @media(max-width:600px) {
+
+            .glass-card {
+                padding: 24px;
+            }
+
+            .title {
+                font-size: 27px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="glass-card">
+
+
+    <a
+        href="{% url 'select_seats' booking.show.id %}"
+        class="back-link"
+    >
+        ← Back to Seats
+    </a>
+
+
+    <div class="title">
+        Booking Summary
+    </div>
+
+
+    <div class="subtitle">
+        Confirm your details before OTP verification.
+    </div>
+
+
+
+    <!-- MESSAGES -->
+
+    {% for message in messages %}
+
+        {% if message.tags == "success" %}
+
+            <div class="custom-alert alert-success-custom">
+
+                ✅ {{ message }}
+
+            </div>
+
+        {% elif message.tags == "error" %}
+
+            <div class="custom-alert alert-error-custom">
+
+                ❌ {{ message }}
+
+            </div>
+
+        {% else %}
+
+            <div class="custom-alert alert-info-custom">
+
+                ℹ️ {{ message }}
+
+            </div>
+
+        {% endif %}
+
+    {% endfor %}
+
+
+
+    <!-- MOVIE -->
+
+    <div class="info-box">
+
+        <div class="label">
+            Movie
+        </div>
+
+        <div class="movie-title">
+
+            {{ booking.show.movie.title }}
+
+        </div>
+
+
+        <div class="show-details">
+
+            {{ booking.show.screen.theatre.name }}
+
+            <br>
+
+            {{ booking.show.screen.theatre.location }}
+
+            <br>
+
+            {{ booking.show.screen.name }}
+
+            <br>
+
+            {{ booking.show.show_date }}
+
+            •
+
+            {{ booking.show.show_time }}
+
+        </div>
+
+    </div>
+
+
+
+    <!-- SEATS -->
+
+    <div class="info-box">
+
+        <div class="label">
+            Selected Seats
+        </div>
+
+
+        {% for item in booking_seats %}
+
+            <span class="seat">
+
+                {{ item.seat.row }}{{ item.seat.number }}
+
+            </span>
+
+        {% empty %}
+
+            <p>No seats selected.</p>
+
+        {% endfor %}
+
+    </div>
+
+
+
+    <!-- AMOUNT -->
+
+    <div class="info-box">
+
+        <div class="label">
+            Total Amount
+        </div>
+
+        <div class="amount">
+
+            ₹{{ booking.total_amount }}
+
+        </div>
+
+    </div>
+
+
+
+    <!-- EMAIL -->
+
+    <div class="info-box">
+
+        <div class="label">
+            OTP will be sent to
+        </div>
+
+        <div class="email">
+
+            {{ request.user.email }}
+
+        </div>
+
+    </div>
+
+
+
+    <!-- SEND OTP -->
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="otp-button"
+        >
+            Send OTP & Continue
+        </button>
+
+    </form>
+
+
+</div>
+
+
+</body>
+
+</html>
