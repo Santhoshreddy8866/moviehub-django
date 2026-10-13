@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "accounts",
     "movies",
     "bookings",
+    "storages",
 
 ]
 
@@ -262,10 +263,35 @@ STATICFILES_DIRS = []
 # Later in Phase 2 we will move MEDIA to S3.
 # =========================================================
 
-MEDIA_URL = "/media/"
+# =========================================================
+# MEDIA STORAGE
+#
+# Local     -> local media/ folder
+# AWS EC2   -> private S3 bucket using IAM Role
+# ==================================================== AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
+AWS_STORAGE_BUCKET_NAME = "moviehub-media-2026-2003"
+AWS_S3_REGION_NAME = "ap-south-1"
 
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "bucket_name": AWS_STORAGE_BUCKET_NAME,
+            "region_name": AWS_S3_REGION_NAME,
+            "endpoint_url": "https://s3.ap-south-1.amazonaws.com",
+            "addressing_style": "virtual",
+            "signature_version": "s3v4",
+            "default_acl": None,
+            "querystring_auth": True,
+            "querystring_expire": 3600,
+            "file_overwrite": False,
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
-MEDIA_ROOT = BASE_DIR / "media"
 
 
 # =========================================================

@@ -9,3 +9,6 @@ env/
 *.log
 db.sqlite3
 media/
+
+staticfiles/
+test.txt
