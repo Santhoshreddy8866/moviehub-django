@@ -1,0 +1,52 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                ssh -i /var/lib/jenkins/.ssh/moviehub_deploy \
+                -o BatchMode=yes \
+                ubuntu@10.0.1.222 '
+                    cd /home/ubuntu/moviehub-django &&
+                    git pull origin main &&
+                    source venv/bin/activate &&
+                    pip install -r requirements.txt &&
+                    set -a &&
+                    source /etc/moviehub.env &&
+                    set +a &&
+                    python manage.py migrate --noinput &&
+                    python manage.py collectstatic --noinput &&
+                    sudo systemctl restart moviehub
+                '
+                '''
+            }
+        }
+
+        stage('Health Check') {
+            steps {
+                sh '''
+                ssh -i /var/lib/jenkins/.ssh/moviehub_deploy \
+                ubuntu@10.0.1.222 \
+                "curl -f http://127.0.0.1/ > /dev/null"
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'MovieHub deployment successful!'
+        }
+
+        failure {
+            echo 'MovieHub deployment failed!'
+        }
+    }
+}
